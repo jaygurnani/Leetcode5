@@ -1,13 +1,16 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class main {
 
     public static void main(String[] args)  {;
-        List<String> palindromes = generatePalindromes("bbccaa");
-        System.out.println(palindromes);
+        //List<String> palindromes = generatePalindromes("bbccaa");
 
+
+        //List<String> output = generateParenthesis(3);
+
+        int[] input = new int[] {1,2,3};
+        List<List<Integer>> output = permute(input);
+        System.out.println(output);
     }
 
     public static List<String> generatePalindromes(String input) {
@@ -79,5 +82,52 @@ public class main {
         char temp = chars[i];
         chars[i] = chars[j];
         chars[j] = temp;
+    }
+
+    public static List<String> generateParenthesis(int n) {
+        List<String> resultList = new ArrayList<>();
+        backtrack(resultList, "", 0, 0, n);
+        return resultList;
+    }
+
+    public static void backtrack(List<String> resultList, String str, int open, int close, int max) {
+        if (str.length() == max * 2) {
+            resultList.add(str);
+            return;
+        }
+
+        if (open < max) {
+            backtrack(resultList, str + "(", open+1, close, max);
+        }
+        if (close < open) {
+            backtrack(resultList, str + ")", open, close +1, max);
+
+        }
+    }
+
+    public static List<List<Integer>> permute(int[] nums) {
+        List<List<Integer>> result = new ArrayList<>();
+
+        permuteRecursive(nums, 0, result);
+
+        return result;
+    }
+
+    public static void permuteRecursive(int[] nums, int index, List<List<Integer>> resultList) {
+        if (index == nums.length) {
+            resultList.add(Arrays.stream(nums).boxed().toList());
+        }
+
+        for(int i = index; i < nums.length; i++) {
+            swapInt(nums, index, i);
+            permuteRecursive(nums, index + 1 , resultList);
+            swapInt(nums, index, i);
+        }
+    }
+
+    public static void swapInt(int[] nums, int i, int j) {
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
     }
 }
