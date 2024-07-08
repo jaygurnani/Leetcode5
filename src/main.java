@@ -7,9 +7,14 @@ public class main {
 
 
         //List<String> output = generateParenthesis(3);
+        //int[] input = new int[] {1,2,3};
+        //List<List<Integer>> output = permute(input);
 
-        int[] input = new int[] {1,2,3};
-        List<List<Integer>> output = permute(input);
+        // 100 = 4 = true
+        // 1100 = 12 =false
+        // 10101 = 21 = true
+        // 11101 = 29 = false
+        boolean output = checkSparse(29);
         System.out.println(output);
     }
 
@@ -129,5 +134,139 @@ public class main {
         int temp = nums[i];
         nums[i] = nums[j];
         nums[j] = temp;
+    }
+
+
+    public boolean isSubtree(TreeNode root, TreeNode subRoot) {
+        TreeNode sameElement = findMatchingRoot(root, subRoot);
+        boolean walkTreeEquals = walkTree(sameElement, subRoot);
+        return walkTreeEquals;
+    }
+
+    public TreeNode findMatchingRoot(TreeNode root, TreeNode subRoot) {
+        if (root == null) {
+            return null;
+        }
+
+        if (root.val == subRoot.val) {
+            return root;
+        } else if (subRoot.val > root.val) {
+            return findMatchingRoot(root.left, subRoot);
+        } else if (subRoot.val < root.val) {
+            return findMatchingRoot(root.right, subRoot);
+        }
+        return null;
+    }
+
+    public boolean walkTree(TreeNode root, TreeNode subRoot) {
+        if (root == null && subRoot == null) {
+            return true;
+        }
+        if ((root == null && subRoot != null) || (root != null && subRoot == null)) {
+            return false;
+        }
+
+        if (root.val == subRoot.val) {
+            return walkTree(root.left, subRoot.left) && walkTree(root.right, subRoot.right);
+        }
+        return false;
+    }
+
+    public int kthSmallest(TreeNode root, int k) {
+        List<Integer> result = inOrderTraversal(root);
+
+        System.out.println(result);
+        return result.get(k-1);
+    }
+
+    public List<Integer> inOrderTraversal(TreeNode current) {
+        if (current == null) {
+            return List.of();
+        }
+        if (current.left == null && current.right == null) {
+            return List.of(current.val);
+        }
+
+        List<Integer> leftTree = inOrderTraversal(current.left);
+        List<Integer> rightTree = inOrderTraversal(current.right);
+
+        return merge(leftTree, rightTree, current.val);
+    }
+
+   public List<Integer> merge(List<Integer> leftTree, List<Integer> rightTree, int val) {
+        List<Integer> returnList = new ArrayList<>();
+
+        returnList.addAll(leftTree);
+        returnList.addAll(rightTree);
+        returnList.add(val);
+        Collections.sort(returnList);
+
+        return returnList;
+    }
+
+
+    public int maxDepth(TreeNode root) {
+        return maxDepthSize(root, 0);
+    }
+
+    public int maxDepthSize(TreeNode root, int currentSize) {
+        if (root == null) {
+            return currentSize;
+        }
+
+        int leftSize = maxDepthSize(root.left, currentSize) + 1;
+        int rightSize = maxDepthSize(root.right, currentSize) + 1;
+
+        if (leftSize > rightSize) {
+            return leftSize;
+        } else {
+            return rightSize;
+        }
+    }
+
+
+    public boolean isSameTree(TreeNode p, TreeNode q) {
+        if (p == null && q == null) {
+            return true;
+        }
+
+        if (p == null || q == null || p.val != q.val) {
+            return false;
+        }
+        return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);
+    }
+
+    public boolean hasAlternatingBits(int n) {
+        String bits = Integer.toBinaryString(n);
+        for (int i = 0; i < bits.length() - 1; i++) {
+            if (bits.charAt(i) == bits.charAt(i+1)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean checkSparse(int n)
+    {
+        // n is not sparse if there
+        // is set in AND of n and n/2
+        if ((n & (n >> 1)) >= 1)
+            return false;
+
+        return true;
+    }
+
+
+    public class TreeNode {
+        int val;
+        TreeNode left;
+        TreeNode right;
+        TreeNode() {}
+        TreeNode(int val) { this.val = val; }
+        TreeNode(int val, TreeNode left, TreeNode right) {
+            this.val = val;
+            this.left = left;
+            this.right = right;
+        }
     }
 }
