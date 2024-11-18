@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class main {
 
@@ -14,7 +15,11 @@ public class main {
         // 1100 = 12 =false
         // 10101 = 21 = true
         // 11101 = 29 = false
-        boolean output = checkSparse(29);
+        //boolean output = checkSparse(29);
+
+        int[] input = new int[]{1,3,1,2};
+        var output = mostVisited(4, input);
+
         System.out.println(output);
     }
 
@@ -136,7 +141,6 @@ public class main {
         nums[j] = temp;
     }
 
-
     public boolean isSubtree(TreeNode root, TreeNode subRoot) {
         TreeNode sameElement = findMatchingRoot(root, subRoot);
         boolean walkTreeEquals = walkTree(sameElement, subRoot);
@@ -204,7 +208,6 @@ public class main {
         return returnList;
     }
 
-
     public int maxDepth(TreeNode root) {
         return maxDepthSize(root, 0);
     }
@@ -223,7 +226,6 @@ public class main {
             return rightSize;
         }
     }
-
 
     public boolean isSameTree(TreeNode p, TreeNode q) {
         if (p == null && q == null) {
@@ -256,6 +258,22 @@ public class main {
         return true;
     }
 
+    public static List<Integer> mostVisited(int n, int[] rounds) {
+        var start = rounds[0];
+        var end = rounds[rounds.length - 1];
+        var res = new ArrayList<Integer>();
+        if (start <= end) {
+            for (int i = start; i <= end; i++) res.add(i);
+        } else {
+            for (int i = 1; i <= end; i++) res.add(i);
+            for (int i = start; i <= n; i++) res.add(i);
+        }
+        return res;
+    }
+
+    public static boolean isValid(String word) {
+
+    }
 
     public class TreeNode {
         int val;
