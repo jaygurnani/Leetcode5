@@ -1,3 +1,4 @@
+import javax.swing.tree.TreeNode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -17,9 +18,26 @@ public class main {
         // 11101 = 29 = false
         //boolean output = checkSparse(29);
 
-        int[] input = new int[]{1,3,1,2};
-        var output = mostVisited(4, input);
+//        int[] input = new int[]{1,3,1,2};
+//        var output = mostVisited(4, input);
 
+//        char[] chars = new char[]{'a','a','b','b','c','c','c'};
+//        var output = compress(chars);
+
+        //int[] nums = {4,2,3,4};
+        //int output = triangleNumber(nums);
+
+        int[][] logs = {
+                {20190101, 0, 1},
+                {20190104, 3, 4},
+                {20190107, 2, 3},
+                {20190211, 1, 5},
+                {20190224, 2, 4},
+                {20190301, 0, 3},
+                {20190312, 1, 2},
+                {20190322, 4, 5}
+        };
+        var output = earliestAcqFixed(logs, 6);
         System.out.println(output);
     }
 
@@ -272,7 +290,125 @@ public class main {
     }
 
     public static boolean isValid(String word) {
+        if (word.length() < 3) {
+            return false;
+        }
 
+        if (!word.matches("^[a-zA-Z0-9]+$")) {
+            return false;
+        }
+
+        if (!word.toLowerCase().matches(".*[aeiou].*")) {
+            return false;
+        }
+
+        if (!word.toLowerCase().matches(".*[bcdfghjklmnpqrstvwxyz].*")) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public static int compress(char[] chars) {
+       int ans = 0;
+
+       for (int i = 0; i < chars.length;) {
+           char letter = chars[i];
+           int count = 0;
+
+           while (i < chars.length && chars[i] == letter) {
+               count++;
+               i++;
+           }
+
+           chars[ans] = letter;
+           ans++;
+
+           if (count > 1) {
+               for (final char c : String.valueOf(count).toCharArray()) {
+                   chars[ans] = c;
+                   ans++;
+               }
+           }
+       }
+
+       return ans;
+    }
+
+    public static int triangleNumber(int[] nums) {
+        int ans = 0;
+        Arrays.sort(nums);
+
+        for(int i = nums.length-1; i > 0; i--) {
+           int lo = 0;
+           int hi = i - 1;
+
+           while (lo < hi) {
+              int result = nums[lo] + nums[hi];
+              if (result > nums[i]) {
+                  ans += hi - lo;
+                  hi--;
+              } else {
+                  lo++;
+              }
+           }
+        }
+
+
+        return ans;
+    }
+
+    // This does work but is too complicated. We will use the new union / find data structure
+    public static int earliestAcq(int[][] logs, int n) {
+        int largestCount = 0;
+        Arrays.sort(logs, Comparator.comparingInt(a -> a[0]));
+        Map<Integer, Set<Integer>> map = new HashMap<>();
+
+        for(int i = 0; i < logs.length; i++) {
+            int[] item = logs[i];
+            Set<Integer> list = map.computeIfAbsent(item[1], x -> new HashSet<>());
+            Stack<Integer> stack = new Stack<>();
+            stack.push(item[2]);
+
+            while(!stack.isEmpty()) {
+                var toCheck = stack.pop();
+                list.add(toCheck);
+                Set<Integer> toCheckList = map.computeIfAbsent(toCheck, x -> new HashSet<>());
+                for(int j : toCheckList) {
+                    stack.push(j);
+                }
+            }
+
+            largestCount = list.size();
+            if (largestCount == n) {
+                return item[0];
+            }
+        }
+
+        return -1;
+    }
+
+    public static int earliestAcqFixed(int[][] logs, int n) {
+        Arrays.sort(logs, Comparator.comparingInt(a -> a[0]));
+        int groupCount = n;
+        UnionFind uf = new UnionFind(n);
+
+        for(int i = 0; i < logs.length; i++) {
+            var log = logs[i];
+            int timestamp = log[0];
+            int friendA = log[1];
+            int friendB = log[2];
+
+            if (uf.union(friendA, friendB)) {
+                groupCount -= 1;
+            }
+
+            if (groupCount == 1) {
+                return timestamp;
+            }
+        }
+
+        return -1;
     }
 
     public class TreeNode {
