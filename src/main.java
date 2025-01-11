@@ -27,18 +27,22 @@ public class main {
         //int[] nums = {4,2,3,4};
         //int output = triangleNumber(nums);
 
-        int[][] logs = {
-                {20190101, 0, 1},
-                {20190104, 3, 4},
-                {20190107, 2, 3},
-                {20190211, 1, 5},
-                {20190224, 2, 4},
-                {20190301, 0, 3},
-                {20190312, 1, 2},
-                {20190322, 4, 5}
-        };
-        var output = earliestAcqFixed(logs, 6);
-        System.out.println(output);
+//        int[][] logs = {
+//                {20190101, 0, 1},
+//                {20190104, 3, 4},
+//                {20190107, 2, 3},
+//                {20190211, 1, 5},
+//                {20190224, 2, 4},
+//                {20190301, 0, 3},
+//                {20190312, 1, 2},
+//                {20190322, 4, 5}
+//        };
+//        var output = earliestAcqFixed(logs, 6);
+
+
+        int[] input1 = new int[] {2,1,3,3,3,0,0,10};
+        int output = thirdDistinctTree(input1);
+        System.out.println(output == 1);
     }
 
     public static List<String> generatePalindromes(String input) {
@@ -409,6 +413,57 @@ public class main {
         }
 
         return -1;
+    }
+
+    public static int minSwaps(int[] data) {
+        int windowSize = 0;
+        for (int num: data) {
+            windowSize += num;
+        }
+
+        int currOnes = 0;
+        int maxOnes = 0;
+
+        for(int i = 0; i < data.length; i++) {
+            currOnes += data[i];
+
+            if (i >= windowSize) {
+                currOnes -= data[i-windowSize];
+            }
+            maxOnes = Math.max(maxOnes, currOnes);
+        }
+
+        return windowSize - maxOnes;
+    }
+
+
+    public static int thirdDistinct(int[] input) {
+        Set<Integer> set = new HashSet<>();
+        for (int i = 0; i < input.length; i++) {
+            set.add(input[i]);
+        }
+
+        set.remove(Collections.max(set));
+        set.remove(Collections.max(set));
+        return Collections.max(set);
+
+    }
+
+    public static int thirdDistinctTree(int[] input) {
+        TreeSet<Integer> distinctNums = new TreeSet<>();
+
+        for (int i = 0; i < input.length; i++) {
+            distinctNums.add(input[i]);
+            if (distinctNums.size() > 3) {
+                distinctNums.pollFirst();
+            }
+        }
+
+        if (distinctNums.size() < 3) {
+            return distinctNums.last();
+        }
+
+        return distinctNums.first();
     }
 
     public class TreeNode {
