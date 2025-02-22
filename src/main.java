@@ -43,8 +43,21 @@ public class main {
         //int[] input1 = new int[] {2,1,3,3,3,0,0,10};
         //int output = thirdDistinctTree(input1);
 
-        boolean output = closeStrings("abbzzca", "babzzcz");
-        System.out.println(output );
+        //boolean output = closeStrings("abbzzca", "babzzcz");
+        int[] input1 = new int[] {3,1,2,4};
+        //int output = sumSubarrayMins(input1);
+
+       // int[] intput2 = new int[] {8,5,2,7,9};
+        //long output1 = maximumBooks(input1);
+
+        ListNode l1 = new ListNode(9, new ListNode(9, new ListNode(9, new ListNode(9, new ListNode(9)))));
+        ListNode l2 = new ListNode(9, new ListNode(9, new ListNode(9, null)));
+        ListNode output = addTwoNumbers(l1, l2);
+        while(output != null) {
+            System.out.println(output.val);
+            output = output.next;
+        }
+        System.out.println();
     }
 
     public static List<String> generatePalindromes(String input) {
@@ -491,6 +504,102 @@ public class main {
         return word1FrequencyList.equals(word2FrequencyList);
     }
 
+    public static int sumSubarrayMins(int[] arr) {
+        Stack<Pair> stack = new Stack<>();
+        long res = 0;
+        int n = arr.length;
+        int MOD = 1000000007;
+
+        for(int i = 0; i <= arr.length; i++) {
+            while (!stack.isEmpty() && (i == arr.length || stack.peek().element >= arr[i])) {
+
+                Pair mid = stack.pop();
+                int left = stack.empty() ? i + 1  : stack.peek().i;
+                int right = i - mid.i;
+
+                res = res + ((long) mid.element * left * right) % MOD;
+            }
+
+            stack.push(new Pair(i, arr[i]));
+        }
+
+        return (int) (res);
+    }
+
+    public static long maximumBooks(int[] books) {
+        int len = books.length;
+        long res = 0;
+        for (int i = 0; i < len; i++) {
+            int prevTaken = books[i];
+            long maxEndingAti = prevTaken;
+            for (int j = i - 1; j >= 0; j--) {
+                int curr = Math.min(books[j], prevTaken - 1);
+                if (curr < 1) break;
+                maxEndingAti += curr;
+                prevTaken = curr;
+            }
+            res = Math.max(res, maxEndingAti);
+        }
+        return res;
+    }
+
+    public static ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        ListNode result = new ListNode(0);
+        ListNode start = result;
+        ListNode temp = new ListNode(0);
+        ListNode currL1 = l1;
+        ListNode currL2 = l2;
+
+        while (currL1!= null || currL2 != null) {
+            if (currL1 == null) {
+                currL1 = new ListNode(0);
+            }
+            if (currL2 == null) {
+                currL2 = new ListNode(0);
+            }
+            int val1 = currL1.val;
+            int val2 = currL2.val;
+            int carry = result.val;
+
+            if (val1 + val2 + carry >= 10) {
+                int firstDigit = (val1 + val2 + carry) % 10;
+                result.val = firstDigit;
+                temp = result;
+                result.next = new ListNode(1);
+            } else {
+                result.val = val1 + val2 + carry;
+                temp = result;
+                result.next = new ListNode(0);
+            }
+            result = result.next;
+            currL1 = currL1.next;
+            currL2 = currL2.next;
+        }
+
+        if (result.val == 0) {
+            temp.next = null;
+        }
+
+        return start;
+    }
+
+    public static class Pair {
+        public int i;
+        public int element;
+
+        public Pair(int i1, int i2) {
+            i = i1;
+            element = i2;
+        }
+    }
+
+    public static class ListNode {
+        int val;
+        ListNode next;
+        ListNode() {}
+        ListNode(int val) { this.val = val; }
+        ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+    }
 
     public class TreeNode {
         int val;
