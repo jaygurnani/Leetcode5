@@ -50,14 +50,17 @@ public class main {
        // int[] intput2 = new int[] {8,5,2,7,9};
         //long output1 = maximumBooks(input1);
 
-        ListNode l1 = new ListNode(9, new ListNode(9, new ListNode(9, new ListNode(9, new ListNode(9)))));
-        ListNode l2 = new ListNode(9, new ListNode(9, new ListNode(9, null)));
-        ListNode output = addTwoNumbers(l1, l2);
-        while(output != null) {
-            System.out.println(output.val);
-            output = output.next;
-        }
-        System.out.println();
+//        ListNode l1 = new ListNode(9, new ListNode(9, new ListNode(9, new ListNode(9, new ListNode(9)))));
+//        ListNode l2 = new ListNode(9, new ListNode(9, new ListNode(9, null)));
+//        ListNode output = addTwoNumbers(l1, l2);
+//        while(output != null) {
+//            System.out.println(output.val);
+//            output = output.next;
+//        }
+
+        int[][] l1 = new int[][]{ new int[] {1,4}, new int[] {4,5}};
+        int[][] output = merge(l1);
+        System.out.println(output);
     }
 
     public static List<String> generatePalindromes(String input) {
@@ -581,6 +584,42 @@ public class main {
         }
 
         return start;
+    }
+
+    public static int[][] merge(int[][] intervals) {
+        Arrays.sort(intervals, (i1, i2) -> Integer.compare(i1[0], i2[0]));
+
+        ArrayList<ArrayList<Integer>> result = new ArrayList<>();
+        ArrayList<Integer> pair = new ArrayList<>();
+        int currentMax = 0;
+
+        for (int[] item : intervals) {
+            int firstElement = item[0];
+            int secondElement = item[1];
+
+            // base case
+            if (pair.isEmpty()) {
+                pair.add(firstElement);
+                currentMax = secondElement;
+            } else if (currentMax >= firstElement && currentMax <= secondElement) {
+                currentMax = secondElement;
+            } else if (currentMax < firstElement) {
+                pair.add(currentMax);
+                result.add(pair);
+                pair = new ArrayList<>();
+                pair.add(firstElement);
+                currentMax = secondElement;
+            }
+        }
+
+        pair.add(currentMax);
+        result.add(pair);
+
+        int[][] array = result.stream()
+                .map(row -> row.stream().mapToInt(Integer::intValue).toArray())
+                .toArray(int[][]::new);
+
+        return array;
     }
 
     public static class Pair {
