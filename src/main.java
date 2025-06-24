@@ -44,7 +44,7 @@ public class main {
         //int output = thirdDistinctTree(input1);
 
         //boolean output = closeStrings("abbzzca", "babzzcz");
-        int[] input1 = new int[] {3,1,2,4};
+        // int[] input1 = new int[] {3,1,2,4};
         //int output = sumSubarrayMins(input1);
 
        // int[] intput2 = new int[] {8,5,2,7,9};
@@ -58,9 +58,12 @@ public class main {
 //            output = output.next;
 //        }
 
-        int[][] l1 = new int[][]{ new int[] {1,4}, new int[] {4,5}};
-        int[][] output = merge(l1);
-        System.out.println(output);
+//        int[][] l1 = new int[][]{ new int[] {1,4}, new int[] {4,5}};
+//        int[][] output = merge(l1);
+
+        int[] input = new int[] {73,74,75,71,69,72,76,73};
+        int[] output = dailyTemperatures(input);
+        System.out.println(Arrays.toString(output));
     }
 
     public static List<String> generatePalindromes(String input) {
@@ -621,6 +624,58 @@ public class main {
 
         return array;
     }
+
+    public static int[] dailyTemperatures2(int[] temperatures) {
+        int[] result = new int[temperatures.length];
+        Map<Integer, Integer> dayOccurance = new HashMap<>();
+        int count = 0;
+        for(Integer i: temperatures){
+            if (!dayOccurance.containsKey(i)) {
+                dayOccurance.put(i, count);
+            }
+
+            count++;
+        }
+        Arrays.sort(temperatures);
+
+        for(int i = 0; i < temperatures.length; i++) {
+            var currentLoop = i+1;
+            while (currentLoop < temperatures.length){
+                var currentTemp = temperatures[i];
+                var nextTemp = temperatures[currentLoop];
+
+                var currentDay = dayOccurance.get(currentTemp);
+                var nextDay = dayOccurance.get(nextTemp);
+                if (nextDay - currentDay > 0) {
+                    result[currentDay] = nextDay-currentDay;
+                    break;
+                } else {
+                    result[currentDay] = 0;
+                }
+                currentLoop++;
+            }
+        }
+        result[result.length-1] = 0;
+
+        return result;
+    }
+
+    public static int[] dailyTemperatures(int[] temperatures) {
+        int[] result = new int[temperatures.length];
+        Stack<Integer> stack = new Stack<>();
+
+        for (int i = 0; i < temperatures.length; i++) {
+            int currentTemp = temperatures[i];
+            while (!stack.isEmpty() && temperatures[stack.peek()] < currentTemp) {
+                int prevDay = stack.pop();
+                result[prevDay] = i - prevDay;
+            }
+            stack.push(i);
+        }
+        return result;
+    }
+
+
 
     public static class Pair {
         public int i;
