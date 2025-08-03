@@ -675,7 +675,34 @@ public class main {
         return result;
     }
 
+    public String removeDuplicateLetters(String s) {
+        int[] lastIndex = new int[26];
+        boolean[] seen = new bool[26];
+        Stack<Integer> stack = new Stack<Integer>();
 
+        // create last seen index
+        for(int i = 0; i < s.length(); i++) {
+            lastIndex[s.charAt(i)-'a'] = i;
+        }
+
+        for(int i = 0; i < s.length(); i++) {
+            int curr = s.charAt(i) -'a';
+            if (seen[curr]) {
+                continue;
+            }
+            while(!stack.isEmpty() && stack.peek() > curr && i < lastIndex[stack.peek()]) {
+                seen[stack.pop()] = false;
+            }
+            stack.push(curr);
+            seen[curr] = true;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        while(!stack.isEmpty()) {
+            sb.append((char)(stack.pop()+'a'));
+        }
+        return sb.reverse().toString();
+    }
 
     public static class Pair {
         public int i;
