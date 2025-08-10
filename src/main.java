@@ -61,9 +61,19 @@ public class main {
 //        int[][] l1 = new int[][]{ new int[] {1,4}, new int[] {4,5}};
 //        int[][] output = merge(l1);
 
-        int[] input = new int[] {73,74,75,71,69,72,76,73};
-        int[] output = dailyTemperatures(input);
-        System.out.println(Arrays.toString(output));
+//        int[] input = new int[] {73,74,75,71,69,72,76,73};
+//        int[] output = dailyTemperatures(input);
+//        System.out.println(Arrays.toString(output));
+
+       // String output = fractionToDecimal(4,333);
+        //System.out.println(output);
+
+        //int[][] input = new int[][]{{1,3,1},{1,5,1},{4,2,1}};
+        //int result = minPathSum(input);
+
+        int[][] input = new int[][]{{1,91},{1,92},{2,93},{2,97},{1,60},{2,77},{1,65},{1,87},{1,100},{2,100},{2,76}};
+        int[][] output = highFive(input);
+        System.out.println(Arrays.deepToString(output));
     }
 
     public static List<String> generatePalindromes(String input) {
@@ -677,7 +687,7 @@ public class main {
 
     public String removeDuplicateLetters(String s) {
         int[] lastIndex = new int[26];
-        boolean[] seen = new bool[26];
+        boolean[] seen = new boolean[26];
         Stack<Integer> stack = new Stack<Integer>();
 
         // create last seen index
@@ -703,6 +713,143 @@ public class main {
         }
         return sb.reverse().toString();
     }
+
+    public static int findMin(int[] nums) {
+        if (nums.length == 1) {
+            return nums[0];
+        }
+
+        int left = 0, right = nums.length-1;
+        if (nums[right] > nums[0]) {
+            return nums[0];
+        }
+
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+
+
+            if (nums[mid] > nums[mid+1]){
+                return nums[mid+1];
+            }
+            if (nums[mid-1] > nums[mid]) {
+                return nums[mid];
+            }
+
+            if (nums[mid] > nums[0]) {
+                left = mid +1 ;
+            } else  {
+                right = mid -1;
+            }
+        }
+
+        return Integer.MAX_VALUE;
+    }
+
+    public static String fractionToDecimal(int numerator, int denominator) {
+        if (numerator == 0) {
+            return "0";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        if (numerator < 0 ^ denominator < 0) {
+            sb.append("-");
+        }
+
+        long num = Math.abs((long) numerator);
+        long denom = Math.abs((long) denominator);
+        long remainder = num % denom;
+
+        sb.append(num / denom);
+
+        if (remainder == 0) {
+            return sb.toString();
+        }
+
+        sb.append(".");
+        HashMap<Long, Integer> map = new HashMap<>();
+        while (remainder != 0) {
+            // We have found an infinite pattern
+            if (map.containsKey(remainder)) {
+                sb.insert(map.get(remainder), "(");
+                sb.append(")");
+                break;
+            }
+
+            map.put(remainder, sb.length());
+
+            remainder *= 10;
+            sb.append(remainder / denom);
+            remainder %= denom;
+
+        }
+        return sb.toString();
+    }
+
+    public static int minPathSum(int[][] grid) {
+        int[][] dp = new int[grid.length][grid[0].length];
+        for(int i = grid.length-1; i >= 0; i--) {
+            for(int j = grid[0].length-1; j >= 0; j--) {
+                if (i == grid.length - 1 && j != grid[0].length - 1)
+                    dp[i][j] = grid[i][j] + dp[i][j + 1];
+
+                else if (j == grid[0].length - 1 && i != grid.length - 1)
+                    dp[i][j] = grid[i][j] + dp[i + 1][j];
+
+                else if (j != grid[0].length - 1 && i != grid.length - 1)
+                    dp[i][j] = grid[i][j] + Math.min(dp[i + 1][j], dp[i][j + 1]);
+
+                else dp[i][j] = grid[i][j];
+            }
+        }
+
+        return dp[0][0];
+    }
+
+    public static int[][] highFive(int[][] items) {
+        HashMap<Integer, List<Integer>> map = new HashMap<>();
+        List<Pair> result = new ArrayList<>();
+        for(int[] score: items) {
+            var student = score[0];
+            var number = score[1];
+
+            List<Integer> currentItem = map.computeIfAbsent(student, k -> new ArrayList<>());
+            currentItem.add(number);
+        }
+
+        for(int res: map.keySet()) {
+            var currentList = map.get(res);
+            currentList.sort((a, b) -> Integer.compare(b, a));
+            var newList = currentList.subList(0, Math.min(5, currentList.size()));
+            var currentSum = newList.stream().mapToInt(Integer::intValue).sum();
+
+            int average = currentSum / newList.size();
+            result.add(new Pair(res, average));
+        }
+
+        result.sort(Comparator.comparingInt(p -> p.i));
+        return result.stream().map(p -> new int[]{p.i, p.element}).toArray(int[][]::new);
+    }
+
+    public static int firstUniqChar(String s) {
+        int[] freq = new int[26];
+        for(int i = 0; i < s.length(); i++) {
+            var item = s.charAt(i);
+            freq[item-'a']++;
+        }
+        for(int i = 0; i < s.length(); i++) {
+            var item = s.charAt(i);
+            if (freq[item]-'a' == 1) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    public static int trap(int[] height) {
+
+    }
+
 
     public static class Pair {
         public int i;
