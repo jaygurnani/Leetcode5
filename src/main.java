@@ -71,9 +71,12 @@ public class main {
         //int[][] input = new int[][]{{1,3,1},{1,5,1},{4,2,1}};
         //int result = minPathSum(input);
 
-        int[][] input = new int[][]{{1,91},{1,92},{2,93},{2,97},{1,60},{2,77},{1,65},{1,87},{1,100},{2,100},{2,76}};
-        int[][] output = highFive(input);
-        System.out.println(Arrays.deepToString(output));
+        //int[][] input = new int[][]{{1,91},{1,92},{2,93},{2,97},{1,60},{2,77},{1,65},{1,87},{1,100},{2,100},{2,76}};
+        //int[][] output = highFive(input);
+
+        int[] input = new int[]{0,1,0,2,1,0,1,3,2,1,2,1};
+        var output = trap(input);
+        System.out.println(output);
     }
 
     public static List<String> generatePalindromes(String input) {
@@ -846,8 +849,47 @@ public class main {
         return -1;
     }
 
-    public static int trap(int[] height) {
+    public static int trap2(int[] height) {
+        int ans = 0;
+        int size = height.length;
 
+        for(int i = 1; i < size-1; i++) {
+            int left_max = 0;
+            int right_max = 0 ;
+
+            for(int j = i; j >= 0; j--){
+                left_max = Math.max(left_max, height[j]);
+            }
+            for(int k = i; k < size; k++) {
+                right_max = Math.max(right_max, height[k]);
+            }
+
+            ans += Math.min(left_max, right_max) - height[i];
+        }
+
+        return ans;
+    }
+
+    public static int trap(int[] height) {
+        int left = 0;
+        int right = height.length-1;
+        int ans = 0;
+        int left_max = 0;
+        int right_max = 0;
+
+        while (left < right) {
+            if (height[left] < height[right]) {
+                left_max = Math.max(left_max, height[left]);
+                ans += left_max - height[left];
+                left++;
+            } else {
+                right_max = Math.max(right_max, height[right]);
+                ans += right_max - height[right];
+                --right;
+            }
+        }
+
+        return ans;
     }
 
 
