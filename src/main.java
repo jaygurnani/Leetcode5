@@ -1,3 +1,5 @@
+import org.w3c.dom.Node;
+
 import javax.swing.tree.TreeNode;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -74,9 +76,23 @@ public class main {
         //int[][] input = new int[][]{{1,91},{1,92},{2,93},{2,97},{1,60},{2,77},{1,65},{1,87},{1,100},{2,100},{2,76}};
         //int[][] output = highFive(input);
 
-        int[] input = new int[]{0,1,0,2,1,0,1,3,2,1,2,1};
-        var output = trap(input);
-        System.out.println(output);
+        //int[] input = new int[]{0,1,0,2,1,0,1,3,2,1,2,1};
+        //var output = trap(input);
+        //System.out.println(output);
+
+//        LRUCache lRUCache = new LRUCache(2);
+//        lRUCache.put(1, 1); // cache is {1=1}
+//        lRUCache.put(2, 2); // cache is {1=1, 2=2}
+//        lRUCache.get(1);    // return 1
+//        lRUCache.put(3, 3); // LRU key was 2, evicts key 2, cache is {1=1, 3=3}
+//        lRUCache.get(2);    // returns -1 (not found)
+//        lRUCache.put(4, 4); // LRU key was 1, evicts key 1, cache is {4=4, 3=3}
+//        lRUCache.get(1);    // return -1 (not found)
+//        lRUCache.get(3);    // return 3
+//        lRUCache.get(4);    // return 4
+
+        printStars(5);
+        //System.out.println();
     }
 
     public static List<String> generatePalindromes(String input) {
@@ -892,6 +908,104 @@ public class main {
         return ans;
     }
 
+    public static void printStars(int n) {
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < i; j++) {
+                System.out.print("*");
+            }
+            System.out.println();
+        }
+    }
+
+    static class LRUCache {
+
+        HashMap<Integer, Integer> map = new HashMap<>();
+        HashMap<Integer, DNode> references = new HashMap<>();
+        int max_size;
+        int currentSize;
+        DNode head, tail;
+
+        public LRUCache(int capacity) {
+            head = new DNode();
+            head.next = null;
+            head.key = -1;
+
+            tail = new DNode();
+            tail.key = -1;
+            tail.next = head;
+            tail.prev = null;
+            head.prev = tail;
+
+            max_size = capacity;
+            currentSize = 0;
+        }
+
+        public int get(int key) {
+            if (map.containsKey(key)) {
+                remove(key);
+                addToHead(key);
+                return map.get(key);
+            } else {
+                return -1;
+            }
+        }
+
+        public void put(int key, int value) {
+            if (map.containsKey(key)) {
+                remove(key);
+                addToHead(key);
+                map.put(key, value);
+            } else {
+                if (currentSize < max_size) {
+                    addToHead(key);
+                    currentSize++;
+                    map.put(key, value);
+                } else {
+                    popTail();
+                    addToHead(key);
+                    map.put(key, value);
+                }
+            }
+        }
+
+        void remove (int key) {
+            DNode curr = references.get(key);
+            DNode nextItem = curr.next;
+            DNode prevItem = curr.prev;
+            nextItem.prev = prevItem;
+            prevItem.next = nextItem;
+            references.remove(key);
+        }
+
+        void popTail() {
+            DNode temp = tail.next;
+            DNode prevItem = temp.prev;
+            DNode nextItem = temp.next;
+
+            nextItem.prev = tail;
+            prevItem.next = nextItem;
+            map.remove(temp.key);
+            references.remove(temp.key);
+        }
+
+        void addToHead(int key) {
+            DNode node = new DNode();
+            node.key = key;
+
+            DNode temp = head.prev;
+            temp.next = node;
+            head.prev = node;
+            node.next = head;
+            node.prev = temp;
+            references.put(key, node);
+        }
+
+        public class DNode {
+            int key;
+            DNode prev;
+            DNode next;
+        }
+    }
 
     public static class Pair {
         public int i;
